@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Настройки Wi-Fi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 40px 30px;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.5s ease-out;
+            margin: 30px auto;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            font-size: 56px;
+            margin-bottom: 15px;
+            text-align: center;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        h1 {
+            color: #2d3748;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #718096;
+            font-size: 16px;
+            margin-bottom: 35px;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        .form-section {
+            margin: 20px 0;
+            padding: 25px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #4a5568;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        .label-icon {
+            font-size: 20px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px 16px;
+            margin: 0;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 15px;
+            background: white;
+            transition: all 0.3s ease;
+            color: #2d3748;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input::placeholder {
+            color: #a0aec0;
+        }
+
+        select {
+            cursor: pointer;
+            padding-right: 40px;
+        }
+
+        /* Стилизуем select без использования картинок */
+        select {
+            position: relative;
+        }
+
+        /* Используем Unicode символ для стрелки через ::after у родителя */
+        .select-wrapper {
+            position: relative;
+        }
+
+        .select-wrapper::after {
+            content: "▼";
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667eea;
+            font-size: 12px;
+            pointer-events: none;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.5);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            animation: buttonPress 0.2s ease;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        @keyframes buttonPress {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(0.98);
+            }
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .loader {
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-message {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .status-message.success {
+            background: linear-gradient(135deg, rgba(72, 187, 120, 0.1) 0%, rgba(56, 161, 105, 0.1) 100%);
+            color: #38a169;
+            border: 1px solid rgba(72, 187, 120, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-message.error {
+            background: linear-gradient(135deg, rgba(245, 101, 101, 0.1) 0%, rgba(229, 62, 62, 0.1) 100%);
+            color: #e53e3e;
+            border: 1px solid rgba(245, 101, 101, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+            margin: 25px 0;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #a0aec0;
+            font-size: 13px;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 30px 20px;
+                border-radius: 20px;
+                margin: 15px auto;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            .subtitle {
+                font-size: 14px;
+            }
+
+            .form-section {
+                padding: 20px;
+            }
+
+            .btn {
+                padding: 14px 20px;
+                font-size: 15px;
+            }
+
+            .logo {
+                font-size: 48px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .container {
+                padding: 25px 15px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            label {
+                font-size: 14px;
+            }
+
+            input, select {
+                padding: 12px 14px;
+                font-size: 14px;
+            }
+        }
+
+        /* Темная тема для систем с поддержкой */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            }
+
+            .container {
+                background: rgba(45, 55, 72, 0.95);
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            }
+
+            h1 {
+                background: linear-gradient(135deg, #90cdf4 0%, #b794f4 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .subtitle {
+                color: #cbd5e0;
+            }
+
+            .form-section {
+                background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+            }
+
+            label {
+                color: #e2e8f0;
+            }
+
+            input, select {
+                background: #2d3748;
+                border-color: #4a5568;
+                color: #e2e8f0;
+            }
+
+            input:focus, select:focus {
+                border-color: #90cdf4;
+                box-shadow: 0 0 0 3px rgba(144, 205, 244, 0.1);
+            }
+
+            .footer {
+                color: #718096;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">📶</div>
+        <h1>Настройки Wi-Fi</h1>
+        <p class="subtitle">Подключите устройство к вашей сети</p>
+        
+        <div class="form-section">
+            <div class="form-group">
+                <label for="ssid">
+                    <span class="label-icon">🌐</span>
+                    Выберите сеть
+                </label>
+                <div class="select-wrapper">
+                    <select id="ssid">
+                        <option value="">Загрузка сетей...</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">
+                    <span class="label-icon">🔐</span>
+                    Пароль
+                </label>
+                <input type="password" id="password" placeholder="Введите пароль сети">
+            </div>
+            
+            <button class="btn" onclick="saveWiFi()" id="saveBtn">
+                <span>💾</span>
+                <span>Сохранить настройки</span>
+            </button>
+            
+            <div class="loader" id="loader"></div>
+            
+            <div id="status"></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <a href="/" class="btn btn-primary" style="text-decoration: none; margin-top: 20px;">
+            <span>🏠</span>
+            <span>На главную</span>
+        </a>
+        
+        <div class="footer">
+            <p>ESP32 Web Server</p>
+        </div>
+    </div>
+    
+    <script>
+        function fetchNetworks() {
+            let loader = document.getElementById('loader');
+            let saveBtn = document.getElementById('saveBtn');
+            loader.style.display = 'block';
+            saveBtn.disabled = true;
+            
+            fetch('/scan')
+                .then(response => response.json())
+                .then(data => {
+                    let select = document.getElementById('ssid');
+                    select.innerHTML = '';
+                    
+                    if (data.length === 0) {
+                        let option = document.createElement('option');
+                        option.value = '';
+                        option.textContent = 'Сети не найдены';
+                        select.appendChild(option);
+                    } else {
+                        data.forEach(network => {
+                            let option = document.createElement('option');
+                            option.value = network;
+                            option.textContent = network;
+                            select.appendChild(option);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка при получении сетей:', error);
+                    showStatus('error', '❌ Ошибка при сканировании сетей');
+                })
+                .finally(() => {
+                    loader.style.display = 'none';
+                    saveBtn.disabled = false;
+                });
+        }
+
+        function saveWiFi() {
+            let ssid = document.getElementById('ssid').value;
+            let password = document.getElementById('password').value;
+            let saveBtn = document.getElementById('saveBtn');
+            
+            if (!ssid) {
+                showStatus('error', '❌ Выберите сеть Wi-Fi');
+                return;
+            }
+            
+            if (!password) {
+                showStatus('error', '❌ Введите пароль');
+                return;
+            }
+            
+            saveBtn.disabled = true;
+            
+            fetch('/save', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ssid, password })
+            })
+            .then(response => response.text())
+            .then(data => {
+                showStatus('success', '✅ ' + data);
+                saveBtn.disabled = false;
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                showStatus('error', '❌ Ошибка при сохранении');
+                saveBtn.disabled = false;
+            });
+        }
+
+        function showStatus(type, message) {
+            let statusDiv = document.getElementById('status');
+            statusDiv.className = 'status-message ' + type;
+            statusDiv.innerHTML = '<span class="status-icon">' + (type === 'success' ? '✅' : '❌') + '</span><span>' + message + '</span>';
+        }
+
+        // Загружаем сети при загрузке страницы
+        fetchNetworks();
+    </script>
+</body>
+</html>

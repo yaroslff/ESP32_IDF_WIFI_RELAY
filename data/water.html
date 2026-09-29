@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление краном</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
+        .container {
+            max-width: 450px;
+            margin: 30px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .section {
+            margin: 25px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .btn {
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin: 10px 8px;
+        }
+        .btn-on { background-color: #28a745; }
+        .btn-on:hover { background-color: #218838; }
+        .btn-off { background-color: #dc3545; }
+        .btn-off:hover { background-color: #c82333; }
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 8px;
+            color: #495057;
+            font-size: 16px;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 13px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Управление краном</h1>
+        <div class="section">
+            <button class="btn btn-on" onclick="turnOnValve()">Включить кран</button>
+            <button class="btn btn-off" onclick="turnOffValve()">Выключить кран</button>
+        </div>
+        <div class="status">
+            <p>Состояние крана: <span id="valveStatus">Неизвестно</span></p>
+        </div>
+        <div class="footer">
+            <p>ESP32 Web Server</p>
+        </div>
+    </div>
+    <script>
+        function updateValveStatus() {
+            fetch('/valve/status')
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('valveStatus').textContent = data.state ? 'Включен' : 'Выключен';
+                });
+        }
+        function turnOnValve() {
+            fetch('/valve/on', {method: 'POST'})
+                .then(() => {
+                    updateValveStatus();
+                    // MQTT publish можно добавить здесь, если нужно с фронта
+                });
+            console.log('Включить кран');
+        }
+        function turnOffValve() {
+            fetch('/valve/off', {method: 'POST'})
+                .then(() => {
+                    updateValveStatus();
+                    // MQTT publish можно добавить здесь, если нужно с фронта
+                });
+            console.log('Выключить кран');
+        }
+        // Периодически обновлять статус
+        setInterval(updateValveStatus, 2000);
+        updateValveStatus();
+    </script>
+</body>
+</html>

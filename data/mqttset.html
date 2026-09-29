@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Настройки MQTT</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 40px 30px;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.5s ease-out;
+            margin: 30px auto;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            font-size: 56px;
+            margin-bottom: 15px;
+            text-align: center;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        h1 {
+            color: #2d3748;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #718096;
+            font-size: 16px;
+            margin-bottom: 35px;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        .form-section {
+            margin: 20px 0;
+            padding: 25px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #4a5568;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+
+        .label-icon {
+            font-size: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            margin: 0;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 15px;
+            background: white;
+            transition: all 0.3s ease;
+            color: #2d3748;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input::placeholder {
+            color: #a0aec0;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+            position: relative;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            animation: buttonPress 0.2s ease;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        @keyframes buttonPress {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(0.98);
+            }
+        }
+
+        .btn-back {
+            background: linear-gradient(135deg, #a0aec0 0%, #718096 100%);
+            box-shadow: 0 4px 15px rgba(113, 128, 150, 0.3);
+        }
+
+        .btn-back:hover {
+            box-shadow: 0 6px 20px rgba(113, 128, 150, 0.5);
+        }
+
+        .btn-connect {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            box-shadow: 0 4px 15px rgba(250, 112, 154, 0.3);
+        }
+
+        .btn-connect:hover {
+            box-shadow: 0 6px 20px rgba(250, 112, 154, 0.5);
+        }
+
+        .btn-connect.connected {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3);
+        }
+
+        .btn-connect.connected:hover {
+            box-shadow: 0 6px 20px rgba(72, 187, 120, 0.5);
+        }
+
+        .loader {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-message {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .status-message.success {
+            background: linear-gradient(135deg, rgba(72, 187, 120, 0.1) 0%, rgba(56, 161, 105, 0.1) 100%);
+            color: #38a169;
+            border: 1px solid rgba(72, 187, 120, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-message.error {
+            background: linear-gradient(135deg, rgba(245, 101, 101, 0.1) 0%, rgba(229, 62, 62, 0.1) 100%);
+            color: #e53e3e;
+            border: 1px solid rgba(245, 101, 101, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+            margin: 25px 0;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #a0aec0;
+            font-size: 13px;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 30px 20px;
+                border-radius: 20px;
+                margin: 15px auto;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            .subtitle {
+                font-size: 14px;
+            }
+
+            .form-section {
+                padding: 20px;
+            }
+
+            .btn {
+                padding: 14px 20px;
+                font-size: 15px;
+            }
+
+            .logo {
+                font-size: 48px;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .container {
+                padding: 25px 15px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            label {
+                font-size: 14px;
+            }
+
+            input {
+                padding: 12px 14px;
+                font-size: 14px;
+            }
+        }
+
+        /* Темная тема для систем с поддержкой */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+            }
+
+            .container {
+                background: rgba(45, 55, 72, 0.95);
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            }
+
+            h1 {
+                background: linear-gradient(135deg, #90cdf4 0%, #b794f4 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .subtitle {
+                color: #cbd5e0;
+            }
+
+            .form-section {
+                background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+            }
+
+            label {
+                color: #e2e8f0;
+            }
+
+            input {
+                background: #2d3748;
+                border-color: #4a5568;
+                color: #e2e8f0;
+            }
+
+            input:focus {
+                border-color: #90cdf4;
+                box-shadow: 0 0 0 3px rgba(144, 205, 244, 0.1);
+            }
+
+            .footer {
+                color: #718096;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🔌</div>
+        <h1>Настройки MQTT</h1>
+        <p class="subtitle">Подключите устройство к MQTT брокеру</p>
+        
+        <div class="form-section">
+            <div class="form-group">
+                <label for="server">
+                    <span class="label-icon">🌐</span>
+                    IP-адрес/Домен
+                </label>
+                <input type="text" id="server" placeholder="Введите адрес сервера">
+            </div>
+            
+            <div class="form-group">
+                <label for="username">
+                    <span class="label-icon">👤</span>
+                    Логин
+                </label>
+                <input type="text" id="username" placeholder="Введите логин">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">
+                    <span class="label-icon">🔐</span>
+                    Пароль
+                </label>
+                <input type="password" id="password" placeholder="Введите пароль">
+            </div>
+            
+            <div class="btn-group">
+                <a href="/" class="btn btn-back">
+                    <span>⬅️</span>
+                    <span>Назад</span>
+                </a>
+                <button class="btn btn-connect" id="connectBtn" onclick="connectMQTT()">
+                    <span id="connectText">Подключиться</span>
+                    <div class="loader" id="loader"></div>
+                </button>
+            </div>
+            
+            <div id="status"></div>
+        </div>
+
+        <div class="divider"></div>
+        
+        <div class="footer">
+            <p>ESP32 Web Server</p>
+        </div>
+    </div>
+
+    <script>
+        function connectMQTT() {
+            const server = document.getElementById('server').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const connectBtn = document.getElementById('connectBtn');
+            const loader = document.getElementById('loader');
+            const status = document.getElementById('status');
+            
+            if (!server) {
+                showStatus('error', '❌ Введите адрес сервера');
+                return;
+            }
+            
+            // Показываем индикатор загрузки
+            loader.style.display = 'inline-block';
+            connectBtn.disabled = true;
+            document.getElementById('connectText').textContent = 'Подключение...';
+            
+            fetch('/mqtt-save', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({server, username, password})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    connectBtn.classList.add('connected');
+                    document.getElementById('connectText').textContent = '✅ Подключено';
+                    showStatus('success', '✅ Успешно подключено к MQTT брокеру');
+                } else {
+                    showStatus('error', '❌ Ошибка подключения: ' + (data.message || 'Неизвестная ошибка'));
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                showStatus('error', '❌ Ошибка подключения к серверу');
+            })
+            .finally(() => {
+                loader.style.display = 'none';
+                connectBtn.disabled = false;
+            });
+        }
+
+        function showStatus(type, message) {
+            let statusDiv = document.getElementById('status');
+            statusDiv.className = 'status-message ' + type;
+            statusDiv.innerHTML = '<span class="status-icon">' + (type === 'success' ? '✅' : '❌') + '</span><span>' + message + '</span>';
+        }
+    </script>
+</body>
+</html>

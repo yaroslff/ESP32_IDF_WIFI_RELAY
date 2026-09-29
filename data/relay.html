@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Управление освещением</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: #2d3748;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section {
+            margin: 20px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .section h2 {
+            color: #2d3748;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .relay-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .relay-group:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateX(2px);
+        }
+
+        .relay-label {
+            flex: 1;
+            color: #4a5568;
+            font-weight: 500;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .relay-icon {
+            font-size: 24px;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #cbd5e0;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        input:checked + .slider {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-on {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        }
+
+        .btn-off {
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+        }
+
+        .btn-all {
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .slider-section {
+            margin: 20px 0;
+        }
+
+        .slider-label {
+            display: block;
+            margin-bottom: 15px;
+            color: #4a5568;
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        .brightness-value {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .brightness-slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 10px;
+            background: #e2e8f0;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .brightness-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .brightness-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+        }
+
+        .brightness-slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #718096;
+            font-size: 13px;
+        }
+
+        .icon {
+            font-size: 20px;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 20px;
+                border-radius: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .section {
+                padding: 15px;
+            }
+
+            .relay-group {
+                padding: 12px;
+            }
+
+            .btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .container {
+                padding: 15px;
+            }
+
+            .section h2 {
+                font-size: 18px;
+            }
+
+            .relay-label {
+                font-size: 14px;
+            }
+        }
+
+        /* Анимация нажатия */
+        .btn:active {
+            animation: buttonPress 0.2s ease;
+        }
+
+        @keyframes buttonPress {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(0.95);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔌 Управление реле</h1>
+
+        <!-- Управление 4 реле -->
+        <div class="section" id="relaysSection">
+            <h2><span class="icon">⚡</span> Реле</h2>
+            
+            <div class="relay-group">
+                <div class="relay-label">
+                    <span class="relay-icon">💡</span>
+                    <span>Реле 1</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="relay1" onchange="toggleRelay(1, this.checked)">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="relay-group">
+                <div class="relay-label">
+                    <span class="relay-icon">💡</span>
+                    <span>Реле 2</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="relay2" onchange="toggleRelay(2, this.checked)">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="relay-group">
+                <div class="relay-label">
+                    <span class="relay-icon">💡</span>
+                    <span>Реле 3</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="relay3" onchange="toggleRelay(3, this.checked)">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="relay-group">
+                <div class="relay-label">
+                    <span class="relay-icon">💡</span>
+                    <span>Реле 4</span>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="relay4" onchange="toggleRelay(4, this.checked)">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <button class="btn btn-on btn-all" onclick="setAll(true)">✅ Включить все</button>
+            <button class="btn btn-off btn-all" onclick="setAll(false)">❌ Выключить все</button>
+        </div>
+
+        <!-- Регулировка яркости -->
+        <div class="section slider-section">
+            <h2><span class="icon">🔆</span> Яркость</h2>
+            <label class="slider-label">
+                Уровень яркости:
+                <span class="brightness-value" id="brightnessValue">50%</span>
+            </label>
+            <input type="range" min="0" max="100" value="50" class="brightness-slider" id="brightnessSlider">
+        </div>
+
+        <!-- Навигация -->
+        <a href="/" class="btn btn-primary btn-all" style="display: block; text-decoration: none; text-align: center; margin-top: 25px;">
+            🏠 На главную
+        </a>
+        
+        <div class="footer">
+            <p>ESP32 Web Server</p>
+        </div>
+    </div>
+
+    <script>
+        // Обновление значения яркости в реальном времени
+        const slider = document.getElementById('brightnessSlider');
+        const valueDisplay = document.getElementById('brightnessValue');
+        
+        slider.addEventListener('input', () => {
+            valueDisplay.textContent = `${slider.value}%`;
+        });
+
+        // Управление реле через toggle switch
+        function toggleRelay(relayNum, isOn) {
+            const state = isOn ? 'on' : 'off';
+            
+            fetch('/relay/control', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    relay: relayNum,
+                    state: state
+                })
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log(`Реле ${relayNum}: ${data}`);
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                // Возвращаем переключатель в исходное состояние при ошибке
+                document.getElementById(`relay${relayNum}`).checked = !isOn;
+            });
+        }
+
+        // Управление всеми реле
+        function setAll(state) {
+            const isOn = state === true;
+            for (let i = 1; i <= 4; i++) {
+                const checkbox = document.getElementById(`relay${i}`);
+                checkbox.checked = isOn;
+                toggleRelay(i, isOn);
+            }
+        }
+    </script>
+</body>
+</html>
