@@ -20,12 +20,10 @@ echo.
 :: Спрашиваем про отправку на сервер
 set /p do_push="Отправить изменения на сервер Gitflic? (Y/N): "
 
-:: Проверяем ответ (ключ /i игнорирует заглавные/строчные буквы)
 if /i "%do_push%"=="Y" goto push_yes
 if /i "%do_push%"=="Д" goto push_yes
 if /i "%do_push%"=="y" goto push_yes
 
-:: Если ввели N, Enter или что-то другое
 echo.
 echo [3/3] Пропуск. Изменения сохранены ТОЛЬКО на компьютере.
 goto finish
@@ -33,7 +31,8 @@ goto finish
 :push_yes
 echo.
 echo [3/3] Отправка кода на сервер...
-git push
+:: Флаг -u связывает локальную ветку с сервером
+git push -u origin master
 
 :finish
 echo.
