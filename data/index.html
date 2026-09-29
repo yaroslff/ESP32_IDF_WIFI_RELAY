@@ -167,6 +167,15 @@
             box-shadow: 0 8px 25px rgba(255, 107, 107, 0.5);
         }
 
+        .btn-ota {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+        }
+
+        .btn-ota:hover {
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.5);
+        }
+
         .btn-icon {
             font-size: 28px;
             flex-shrink: 0;
@@ -256,6 +265,21 @@
         .footer-version {
             font-size: 11px;
             color: #cbd5e0;
+        }
+
+        .footer-link {
+            display: inline-block;
+            margin-top: 8px;
+            color: #718096;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .footer-link:hover {
+            color: #4a5568;
+            text-decoration: underline;
         }
 
         /* Адаптивность */
@@ -390,6 +414,15 @@
                 </div>
                 <span class="btn-arrow">→</span>
             </a>
+
+            <a href="/ota.html" class="btn btn-ota">
+                <span class="btn-icon">⬆️</span>
+                <div class="btn-content">
+                    <span class="btn-title">Обновление OTA</span>
+                    <span class="btn-description">Загрузка прошивки</span>
+                </div>
+                <span class="btn-arrow">→</span>
+            </a>
         </div>
 
         <div class="divider"></div>
@@ -397,6 +430,7 @@
         <!-- Подвал -->
         <div class="footer">
             <p>ESP32 Web Server by Yaroslff</p>
+            <a href="/ota.html" class="footer-link">Обновление OTA</a>
             <span class="footer-version">v1.0</span>
         </div>
     </div>
