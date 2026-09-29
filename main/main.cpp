@@ -1,21 +1,4 @@
-// Подключение стандартных и ESP-IDF библиотек
-#include <stdio.h>
-#include <string.h>
-#include <string>
-#include "esp_wifi.h"           // Работа с Wi-Fi
-#include "esp_event.h"          // Система событий ESP
-#include "esp_log.h"            // Логирование
-#include "nvs_flash.h"          // NVS (энергонезависимая память)
-#include "esp_vfs.h"            // Виртуальная файловая система
-#include "esp_vfs_fat.h"        // FAT файловая система
-#include "esp_spiffs.h"         // SPIFFS файловая система
-#include "esp_http_server.h"    // Веб-сервер
-#include "cJSON.h"              // Работа с JSON
-#include "esp_netif.h"          // Сетевые интерфейсы ESP
-#include "wifi_manager.h"       // Модуль управления Wi-Fi
-#include "spiffs_manager.h"     // Модуль работы с SPIFFS
-#include "http_handlers.h"      // Модуль HTTP-обработчиков
-#include "mqtt_handlers.h"      // Модуль MQTT (содержит mqtt_init)
+#include "main.h"
 
 int relay_state_map[4] = {0}; // Глобальная переменная для хранения состояния реле
 
@@ -126,25 +109,11 @@ void relayTask(void *pvParameter) {
 
 void defaultTassk(void *pvParameter){
     while (1) {
-        if(valve_state == 1) {
+       
             gpio_set_level(GPIO_NUM_8, 1);
-            vTaskDelay(100);
-            gpio_set_level(GPIO_NUM_8, 0);
-            vTaskDelay(100); 
-        } else {
-            gpio_set_level(GPIO_NUM_8, 1);
-            vTaskDelay(500);
+            vTaskDelay(250);
             gpio_set_level(GPIO_NUM_8, 0);
             vTaskDelay(500);
-        }
+      
     }
-}
-
-// --- Управление краном ---
-void water_on() {
-    ESP_LOGI("WATER", "Включить кран (water_on)");
-}
-
-void water_off() {
-    ESP_LOGI("WATER", "Выключить кран (water_off)");
 }
