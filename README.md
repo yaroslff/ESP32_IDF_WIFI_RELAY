@@ -68,7 +68,6 @@
 
 Если вы ищете целеустремленного junior-разработчика в команду, я буду рад пообщаться!
 
-*   **Email:** [Ваш Email]
-*   **Telegram:** [@ВашTelegram]
-*   **LinkedIn:** [Ссылка на профиль]
-*   **GitHub:** [Ссылка на профиль]
+*   **Email:** [yaroslff@gmail.com]
+
+*   **GitHub:** [https://github.com/yaroslff]
