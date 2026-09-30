@@ -53,13 +53,15 @@ void relayTask(void *pvParameter){
 }
 
 void gpio_tasks_init(){
+    ledc_init(); // Инициализация PWM для светодиода
+    
     // Создаем очередь для реле здесь, чтобы она не была NULL
     xRelayQueue = xQueueGenericCreate(10, sizeof(RelayCommand), queueQUEUE_TYPE_BASE);
 
     // Настройка GPIO для реле и светодиода
     gpio_config_t io_conf = {}; // Также лучше обнулить во избежание проблем
     io_conf.mode = GPIO_MODE_OUTPUT;
-    io_conf.pin_bit_mask = (1ULL << 8) | (1ULL << 1) | (1ULL << 2) | (1ULL << 3) | (1ULL << 4) ;
+    io_conf.pin_bit_mask = (1ULL << RELAY_1_GPIO) | (1ULL << RELAY_2_GPIO) | (1ULL << RELAY_3_GPIO) | (1ULL << RELAY_4_GPIO);
     io_conf.intr_type = GPIO_INTR_DISABLE;
     gpio_config(&io_conf);
 

@@ -1,5 +1,5 @@
 #include "main.h"
-
+#include "gpio_tasks.h"
 int relay_state_map[4] = {0}; // Глобальная переменная для хранения состояния реле
 
 
@@ -14,7 +14,7 @@ extern "C" void app_main() {
 
    
     xTaskCreate(&defaultTassk, "defaultTask", 2048, NULL, 1, NULL);
-   
+    gpio_tasks_init(); // Инициализация задач GPIO (включая реле и светодиод)
 
     // Инициализация энергонезависимой памяти (NVS)
     ESP_ERROR_CHECK(nvs_flash_init());

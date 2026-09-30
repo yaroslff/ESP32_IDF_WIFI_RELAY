@@ -13,6 +13,7 @@
 #include "mqtt_client.h"
 #include "esp_ota_ops.h"
 #include "esp_system.h"
+#include "gpio_tasks.h"
 
 extern esp_mqtt_client_handle_t global_mqtt_client;
 
@@ -262,6 +263,7 @@ esp_err_t relay_control_handler(httpd_req_t *req) {
     last_relay_state = relay_state;
     relay_state_map[relay_num - 1] = relay_state;
     
+    relay_send_command(relay_num, relay_state);
     // Логируем действие
     ESP_LOGI(TAG, "Relay control command: Relay %d -> %s", relay_num, state_str);
     
