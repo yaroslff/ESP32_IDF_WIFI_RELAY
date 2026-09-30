@@ -193,25 +193,8 @@ esp_err_t mqtt_save_handler(httpd_req_t *req) {
     return ESP_OK;
 }
 
-esp_err_t valve_on_handler(httpd_req_t *req) {
-    valve_state = 1;
-    if (global_mqtt_client) {
-        esp_mqtt_client_publish(global_mqtt_client, "ESP_controller_1/valve/status", "on", 0, 1, 0);
-        esp_mqtt_client_publish(global_mqtt_client, "ESP_controller_1/valve/control", "on", 0, 1, 0);
-    }
-    httpd_resp_send(req, "Кран включен", HTTPD_RESP_USE_STRLEN);
-    return ESP_OK;
-}
 
-esp_err_t valve_off_handler(httpd_req_t *req) {
-    valve_state = 0;
-    if (global_mqtt_client) {
-        esp_mqtt_client_publish(global_mqtt_client, "ESP_controller_1/valve/status", "off", 0, 1, 0);
-        esp_mqtt_client_publish(global_mqtt_client, "ESP_controller_1/valve/control", "off", 0, 1, 0);
-    }
-    httpd_resp_send(req, "Кран выключен", HTTPD_RESP_USE_STRLEN);
-    return ESP_OK;
-}
+
 
 // Универсальный обработчик управления реле через POST
 esp_err_t relay_control_handler(httpd_req_t *req) {
@@ -289,13 +272,7 @@ esp_err_t relay_control_handler(httpd_req_t *req) {
     return ESP_OK;
 }
 
-esp_err_t valve_status_handler(httpd_req_t *req) {
-    char resp[32];
-    snprintf(resp, sizeof(resp), "{\"state\":%d}", valve_state);
-    httpd_resp_set_type(req, "application/json");
-    httpd_resp_send(req, resp, HTTPD_RESP_USE_STRLEN);
-    return ESP_OK;
-}
+
 
 // Обработчик загрузки OTA прошивки
 esp_err_t ota_update_handler(httpd_req_t *req) {
@@ -412,30 +389,11 @@ httpd_handle_t start_webserver() {
     };
     httpd_register_uri_handler(server, &uri_mqtt_save);
     
-    // Регистрируем обработчики управления краном
-    httpd_uri_t uri_valve_on = {
-        .uri = "/valve/on",
-        .method = HTTP_POST,
-        .handler = valve_on_handler,
-        .user_ctx = NULL
-    };
-    httpd_register_uri_handler(server, &uri_valve_on);
+   
     
-    httpd_uri_t uri_valve_off = {
-        .uri = "/valve/off",
-        .method = HTTP_POST,
-        .handler = valve_off_handler,
-        .user_ctx = NULL
-    };
-    httpd_register_uri_handler(server, &uri_valve_off);
     
-    httpd_uri_t uri_valve_status = {
-        .uri = "/valve/status",
-        .method = HTTP_GET,
-        .handler = valve_status_handler,
-        .user_ctx = NULL
-    };
-    httpd_register_uri_handler(server, &uri_valve_status);
+    
+    
     
     // Регистрируем обработчик управления реле (POST)
     httpd_uri_t uri_relay_control = {

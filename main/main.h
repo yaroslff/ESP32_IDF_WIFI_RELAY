@@ -18,3 +18,4 @@
 #include "spiffs_manager.h"     // Модуль работы с SPIFFS
 #include "http_handlers.h"      // Модуль HTTP-обработчиков
 #include "mqtt_handlers.h"      // Модуль MQTT (содержит mqtt_init)
+//#include "arduino.h"     

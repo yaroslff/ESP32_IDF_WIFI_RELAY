@@ -26,13 +26,12 @@ void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event
                 ESP_LOGI(TAG, "Команда управления краном: %s", msg.c_str());
                 if (msg == "on") {
                    
-                    valve_state = 1;
+                   
                     if (global_mqtt_client) {
                         esp_mqtt_client_publish(global_mqtt_client, "ESP_controller_1/valve/status", "on", 0, 1, 0);
                     }
                 } else if (msg == "off") {
                   
-                    valve_state = 0;
                     if (global_mqtt_client) {
                         esp_mqtt_client_publish(global_mqtt_client, "ESP_controller_1/valve/status", "off", 0, 1, 0);
                     }

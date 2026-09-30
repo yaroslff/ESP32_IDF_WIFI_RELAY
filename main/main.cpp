@@ -2,24 +2,19 @@
 
 int relay_state_map[4] = {0}; // Глобальная переменная для хранения состояния реле
 
-void gpio_init();
+
 
 void defaultTassk(void *pvParameter);
-void relayTask(void *pvParameter);
 
 
 
-// --- Управление краном ---
-extern int valve_state;
-int valve_state = 0;
 
 // Главная точка входа приложения ESP-IDF
 extern "C" void app_main() {
 
-    gpio_init();
-
+   
     xTaskCreate(&defaultTassk, "defaultTask", 2048, NULL, 1, NULL);
-    xTaskCreate(&relayTask, "relayTask", 2048, NULL, 1, NULL);
+   
 
     // Инициализация энергонезависимой памяти (NVS)
     ESP_ERROR_CHECK(nvs_flash_init());
@@ -73,39 +68,8 @@ extern "C" void app_main() {
     }
 }
 
-void gpio_init(){
-    gpio_config_t io_conf;
-    io_conf.mode = GPIO_MODE_OUTPUT;
-    io_conf.pin_bit_mask = (1ULL << 8) | (1ULL << 1) | (1ULL << 2) | (1ULL << 3) | (1ULL << 4) ;
-    io_conf.intr_type = GPIO_INTR_DISABLE;
-    gpio_config(&io_conf);
-}
 
-void relayTask(void *pvParameter) {
-    while (1) {
-        if(relay_state_map[0] == 1) {
-            gpio_set_level(GPIO_NUM_1, 0);
-        } else {
-            gpio_set_level(GPIO_NUM_1, 1);
-        }
-        if(relay_state_map[1] == 1) {
-            gpio_set_level(GPIO_NUM_2, 0);
-        } else {
-            gpio_set_level(GPIO_NUM_2, 1);
-        }
-        if(relay_state_map[2] == 1) {
-            gpio_set_level(GPIO_NUM_3, 0);
-        } else {
-            gpio_set_level(GPIO_NUM_3, 1);
-        }
-        if(relay_state_map[3] == 1) {
-            gpio_set_level(GPIO_NUM_4, 0);
-        } else {
-            gpio_set_level(GPIO_NUM_4, 1);
-        }
-       vTaskDelay(250); 
-    }
-}
+
 
 void defaultTassk(void *pvParameter){
     while (1) {
