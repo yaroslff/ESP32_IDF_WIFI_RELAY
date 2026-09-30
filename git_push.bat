@@ -9,12 +9,15 @@ echo.
 set /p commit_msg="Введите описание изменений (Enter = 'Обновление кода'): "
 if "%commit_msg%"=="" set commit_msg=Обновление кода
 
+:: Формируем финальное сообщение, добавляя имя текущего ПК в скобках
+set final_msg=%commit_msg% [%COMPUTERNAME%]
+
 echo.
 echo [1/3] Добавление файлов...
 git add .
 
-echo [2/3] Сохранение коммита...
-git commit -m "%commit_msg%"
+echo [2/3] Сохранение коммита: "%final_msg%"...
+git commit -m "%final_msg%"
 
 echo.
 :: Спрашиваем про отправку на сервер
