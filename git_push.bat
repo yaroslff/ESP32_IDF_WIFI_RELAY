@@ -37,6 +37,9 @@ echo [3/3] Отправка кода на сервер...
 :: Флаг -u связывает локальную ветку с сервером
 git push -u origin master
 
+echo -- Отправка на резервный сервер (backup) --
+git push backup master
+
 :finish
 echo.
 echo =======================================
