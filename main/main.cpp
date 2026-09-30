@@ -74,9 +74,6 @@ extern "C" void app_main() {
 void defaultTassk(void *pvParameter){
     while (1) {
        
-            gpio_set_level(GPIO_NUM_8, 1);
-            vTaskDelay(250);
-            gpio_set_level(GPIO_NUM_8, 0);
             vTaskDelay(500);
       
     }

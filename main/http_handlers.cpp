@@ -273,6 +273,39 @@ esp_err_t relay_control_handler(httpd_req_t *req) {
     httpd_resp_send(req, "OK", HTTPD_RESP_USE_STRLEN);
     return ESP_OK;
 }
+// Новый обработчик для управления яркостью светодиода через POST
+esp_err_t brightness_control_handler(httpd_req_t *req) {
+    char buf[100];
+    int ret = httpd_req_recv(req, buf, sizeof(buf) - 1);
+    if (ret <= 0) {
+        httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "Failed to receive data");
+        return ESP_FAIL;
+    }
+    buf[ret] = '\0';
+    
+    cJSON *json = cJSON_Parse(buf);
+    if (!json) {
+        httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "Invalid JSON");
+        return ESP_FAIL;
+    }
+    
+    const cJSON *brightness_json = cJSON_GetObjectItem(json, "brightness");
+    if (!cJSON_IsNumber(brightness_json)) {
+        cJSON_Delete(json);
+        httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "Invalid brightness parameter");
+        return ESP_FAIL;
+    }
+    
+    int brightness = brightness_json->valueint;
+    led_onpcb_send_command(brightness);
+    ESP_LOGI(TAG, "Received brightness command: %d", brightness);
+    
+    ESP_LOGI(TAG, "LED Brightness set to: %d%%", brightness);
+    
+    cJSON_Delete(json);
+    httpd_resp_send(req, "OK", HTTPD_RESP_USE_STRLEN);
+    return ESP_OK;
+}
 
 
 
@@ -405,6 +438,15 @@ httpd_handle_t start_webserver() {
         .user_ctx = NULL
     };
     httpd_register_uri_handler(server, &uri_relay_control);
+
+    // Регистрируем обработчик управления яркостью светодиода (POST)
+    httpd_uri_t uri_brightness_control = {
+        .uri = "/relay/brightness",
+        .method = HTTP_POST,
+        .handler = brightness_control_handler,
+        .user_ctx = NULL
+    };
+    httpd_register_uri_handler(server, &uri_brightness_control);
 
     httpd_uri_t uri_ota_update = {
     .uri       = "/update",

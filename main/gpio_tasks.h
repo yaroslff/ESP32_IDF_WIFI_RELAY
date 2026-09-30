@@ -11,3 +11,5 @@
 void gpio_tasks_init();
 void relay_send_command(int relay_num, int state);
 void relayTask(void *pvParameter);
+void led_onpcb_send_command(int pwm_value);
+void onpcb_led_task(void *pvParameter);

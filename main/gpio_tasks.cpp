@@ -2,8 +2,7 @@
 #include "driver/ledc.h"
 
 static QueueHandle_t xRelayQueue = NULL;
-// Если xRGB_LedQueue пока не нужна, удаляем её или используем. 
-// Уберем её, чтобы избежать предупреждения/ошибки неиспользуемой переменной.
+static QueueHandle_t xOnPCBLedQueue = NULL; 
 
 typedef struct {
     int relay_num;
@@ -31,6 +30,8 @@ void ledc_init() {
     ledc_channel_1.hpoint     = 0;
 
     ledc_channel_config(&ledc_channel_1);
+
+    ledc_fade_func_install(0);
 }
 
 void relay_send_command(int relay_num, int state) {
@@ -39,6 +40,32 @@ void relay_send_command(int relay_num, int state) {
     command.state = state;
     if (xRelayQueue != NULL) {
         xQueueSend(xRelayQueue, &command, 0);
+    }
+}
+
+void led_onpcb_send_command(int pwm_value) {
+    if (xOnPCBLedQueue != NULL) {
+        xQueueSend(xOnPCBLedQueue, &pwm_value, 0);
+    }
+}
+
+void onpcb_led_task(void *pvParameter) {
+    int pwm_value;
+    while (1) {
+        if (xQueueReceive(xOnPCBLedQueue, &pwm_value, portMAX_DELAY) == pdTRUE) {
+           
+            // 3. Запуск команды (целевое значение: 1023, время: 3000 мс)
+            int current_duty = 1023 - pwm_value; // Преобразуем яркость в скважность
+
+
+    ledc_set_fade_time_and_start(
+        LEDC_LOW_SPEED_MODE, 
+        LEDC_CHANNEL_0, 
+        current_duty,                 // Целевая скважность (100% для 10 бит)
+        3000,                 // Время перехода в миллисекундах (3 секунды)
+        LEDC_FADE_NO_WAIT     // Важно: вернуть управление мгновенно!
+        );
+        }
     }
 }
 
@@ -57,6 +84,7 @@ void gpio_tasks_init(){
     
     // Создаем очередь для реле здесь, чтобы она не была NULL
     xRelayQueue = xQueueGenericCreate(10, sizeof(RelayCommand), queueQUEUE_TYPE_BASE);
+    xOnPCBLedQueue = xQueueGenericCreate(10, sizeof(int), queueQUEUE_TYPE_BASE);
 
     // Настройка GPIO для реле и светодиода
     gpio_config_t io_conf = {}; // Также лучше обнулить во избежание проблем
@@ -67,4 +95,6 @@ void gpio_tasks_init(){
 
     // Создание задачи для управления реле
     xTaskCreate(relayTask, "relayTask", 2048, NULL, 5, NULL);
+    // Создание задачи для управления яркостью светодиода
+    xTaskCreate(onpcb_led_task, "onpcb_led_task", 2048, NULL, 5, NULL);
 }
