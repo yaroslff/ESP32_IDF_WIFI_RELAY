@@ -1,13 +1,13 @@
 #include "main.h"
 #include "gpio_tasks.h"
 #include "ssd1306.h"
+#include "oled.h"
 int relay_state_map[4] = {0}; // Глобальная переменная для хранения состояния реле
 
 
 
 void defaultTassk(void *pvParameter);
 
-SSD1306_t dev;
 
 
 // Главная точка входа приложения ESP-IDF
@@ -60,14 +60,8 @@ extern "C" void app_main() {
 
     // Инициализация MQTT (весь код убран в mqtt_handlers.cpp)
     mqtt_init();
-    i2c_master_init(&dev, CONFIG_SDA_GPIO, CONFIG_SCL_GPIO, CONFIG_RESET_GPIO);
-    dev._flip = true;
-    ssd1306_init(&dev, 128, 64);
 
-    ssd1306_clear_screen(&dev, false);
-    ssd1306_contrast(&dev, 0xff);
-
-    ssd1306_display_text_x3(&dev, 0, "Hello, World!", 5, false);
+    oled_init();
     // После запуска веб-сервера:
     if (server) {
         ESP_LOGI("HTTP", "Веб-сервер запущен успешно");

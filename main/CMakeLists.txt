@@ -6,6 +6,7 @@ idf_component_register(
         "wifi_manager.cpp"
         "mqtt_handlers.cpp"
         "gpio_tasks.cpp"
+        "oled.cpp"
     INCLUDE_DIRS "."
     REQUIRES esp_wifi vfs fatfs nvs_flash spiffs esp_http_server esp_event driver log freertos esp_netif app_update esp_driver_ledc ssd1306
 )
